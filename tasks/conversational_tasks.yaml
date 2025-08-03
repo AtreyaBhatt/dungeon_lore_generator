@@ -1,0 +1,47 @@
+handle_user_message_task:
+  description: >
+    Receive the users initial research request.
+    Respond in a friendly, professional manner, ensuring the user understands 
+    the bot's capabilities.
+    Store the user's input and begin the requirement collection process.
+  expected_output: >
+    A conversational response that acknowledges the user, restates or confirms their initial request,
+    and prepares to clarify further details if needed.
+  agent: conversational_agent
+
+intent_detection_task:
+  description: >
+    Analyze the user's message(s) to detect their main intent.
+    Extract any explicitly provided research requirements, such as topic, focus area, depth, geographic or temporal scope, and preferred output format.
+    Identify which requirements are missing or ambiguous.
+  expected_output: >
+    - The user's core research intent, as a summary.
+    - A list of extracted requirement fields (topic, focus, scope, format, etc., with their values if present).
+    - A list of missing or unclear requirement fields.
+  agent: intent_agent
+
+clarify_requirements_task:
+  description: >
+    For any missing or ambiguous requirement fields (as identified previously), generate polite, targeted follow-up questions for the user.
+    Ensure questions are concise and address one missing detail at a time unless efficient to group.
+    Iterate this process until all necessary requirements for a research task are clear and complete.
+  expected_output: >
+    A sequence of one or more clarification questions to the user.
+    Updated session state showing which requirement slots are filled.
+  agent: clarity_agent
+
+structure_research_request_task:
+  description: >
+    Once all essential requirement fields have been gathered, synthesize the conversation history into a structured research request.
+    Format it as a clear set of parameters (e.g., JSON, Python dict, or other schema) to be handed off to the research crew for execution.
+    Confirm with the user that all requirements are correct and ask if they'd like to submit or make any last changes. Once they confirm
+    that th requestt is complete, set the complete parameter to True
+  expected_output: >
+    A structured research task specification object (e.g., Python dict or JSON) summarizing:
+      - Topic
+      - Focus
+      - Scope
+      - Output format
+      - Any special instructions/preferences
+    Confirmation message to the user.
+  agent: structure_agent
